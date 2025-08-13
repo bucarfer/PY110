@@ -324,5 +324,151 @@ def swap_name(my_str):
     return new_str
 
 '''EXERCISE 8: Sequence count
+Create a function that takes two integers as arguments. The first argument is a count, and the second is the starting number of a sequence that your function will create. The function should return a list containing the same number of elements as the count argument. The value of each element should be a multiple of the starting number.
 
+You may assume that count will always be an integer greater than or equal to 0. The starting number can be any integer. If the count is 0, the function should return an empty list.
+
+P
+I= 2 integers (count, starting number)
+O= list of count elements , value of each element should be a multiple
+RULES
+-count >= 0
+-starting (any number)
+- if count is 0 -> empty list
+E
+D
+integers and list
+A
+-def function with int parameters n and start
+-def new list []
+item = starting point
+for item in range(len(count))
+    item *= 1
+C
 '''
+
+def sequence(count, start_num):
+    return [multiplier * start_num for multiplier in range(1, count + 1)]
+
+print(sequence(5, 1) == [1, 2, 3, 4, 5])          # True
+print(sequence(4, -7) == [-7, -14, -21, -28])     # True
+print(sequence(3, 0) == [0, 0, 0])                # True
+print(sequence(0, 1000000) == [])                 # True
+
+'''EXERCISE 9: Reversed list
+Write a function that takes a list as an argument and reverses its elements, in place. That is, mutate the list passed into the function. The returned object should be the same object used as the argument.
+
+You may not use the list.reverse method nor may you use a slice ([::-1]).
+
+P
+I= list
+O= reverse list?
+R
+-do not use list.reverse or slice [::-1]
+E
+from examples I can see we have to order list elements
+D
+lists of strings and int
+A
+starting count from end, define variable count
+create copy of list -> starting_list
+loop on starting list
+    with index count replace list indexes in negative order
+
+C
+'''
+
+def reverse_list(my_list):
+    my_list.sort(reverse=True) # returns None
+    return my_list
+
+list1 = [1, 2, 3, 4]
+result = reverse_list(list1)
+print(result == [4, 3, 2, 1])               # True
+print(list1 is result)                      # True
+
+list2 = ["a", "b", "c", "d", "e"]
+result2 = reverse_list(list2)
+print(result2 == ['e', 'd', 'c', 'b', 'a']) # True
+print(list2 is result2)                     # True
+
+list3 = ["abc"]
+result3 = reverse_list(list3)
+print(result3 == ['abc'])                   # True
+print(list3 is result3)                     # True
+
+list4 = []
+result4 = reverse_list(list4)
+print(result4 == [])                        # True
+print(list4 is result4)                     # True
+
+## do not confuse reverse with sorted descendent
+
+def reverse_list(my_list):
+    count = -1
+    starting_list = my_list.copy()
+    for item in starting_list: #[1, 2, 3, 4]
+        my_list[count] = item
+        count -= 1
+
+    return my_list
+
+## lsBot suggests to use swap instead of my approach copying the list
+
+def reverse_list(my_list):
+    for idx in range(len(my_list) // 2):
+        my_list[idx], my_list[-idx - 1] = my_list[-idx - 1], my_list[idx]
+
+    return my_list
+
+'''EXERCISE 10: Matching Parenthesis
+Write a function that takes a string as an argument and returns True if all parentheses in the string are properly balanced, False otherwise. To be properly balanced, parentheses must occur in matching '(' and ')' pairs.
+
+I= string
+O= Bool
+Rules
+-closed matching parentheses return True
+D
+list and strings
+E
+based on examples we cannot start with ) or finish with (
+A
+loop through string and add to list if char = ( and )
+transform new list to str with join
+    if str.startswith ) or ends with ( -> return False
+    if numbers of ( are equal as ), use count -> return true
+
+
+C
+'''
+
+def is_balanced(my_str):
+    new_str = ''.join([char for char in my_str if char == '(' or char == ')'])
+    if new_str.startswith(')') or new_str.endswith('('):
+        return False
+    return new_str.count('(') == new_str.count(')')
+
+print(is_balanced("What (is) this?") == True)        # True
+print(is_balanced("What is) this?") == False)        # True
+print(is_balanced("What (is this?") == False)        # True
+print(is_balanced("((What) (is this))?") == True)    # True
+print(is_balanced("((What)) (is this))?") == False)  # True
+print(is_balanced("Hey!") == True)                   # True
+print(is_balanced(")Hey!(") == False)                # True
+print(is_balanced("What ((is))) up(") == False)      # True
+
+## lsBot correction, my solution is almost correct but it will not work for a case like "())(()" try using counter in the original str:
+# You could start a counter at 0.
+# When you see an opening parenthesis (, you add 1 to the counter.
+# When you see a closing parenthesis ), you subtract 1 from the counter.
+
+def is_balanced(my_str):
+    count = 0
+    for char in my_str:
+        if char == '(':
+            count += 1
+        elif char == ')':
+            count -= 1
+        if count < 0:
+            return False
+    return count == 0
