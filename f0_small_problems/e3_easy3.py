@@ -471,4 +471,21 @@ def is_balanced(my_str):
             count -= 1
         if count < 0:
             return False
+
     return count == 0
+
+## Further Exploration challenge, include brackets [], {},  (e.g., ([)] is not balanced)
+
+def is_balanced(my_str):
+    my_list = []
+    pairs = {')': '(', ']': '[', '}': '{'}
+
+    for char in my_str:
+        if char in '([{':
+            my_list.append(char)
+        elif char in ')]}':
+            if my_list == [] or my_list[-1] != pairs[char]:
+                return False
+            my_list.pop()
+
+    return my_list == []
