@@ -245,3 +245,274 @@ def most_common_char(my_str):
     for char in my_str.lower():
         if my_dict[char] == max_count:
             return char
+
+### Problem 6 - time 12min
+# Create a function that takes a string argument and returns a dict object in which the keys represent the lowercase letters in the string, and the values represent how often the corresponding letter occurs in the string.
+
+'''
+P
+I = string
+O = dict (key=lowercase alpha char: value (count))
+E
+- only alpha and lower characters will be taken into account
+D
+list and dict
+set
+A
+mi . iterate through the string and filter only lower case alpha characters. return a dict with those char and the count
+
+dict comprehension
+    iterate through set(string)
+        if cond char.islower() and char.isalpha() (meets both conditions)
+    [char]: string.count(char)
+C
+'''
+
+def count_letters(my_str):
+    return {char: my_str.count(char) for char in set(my_str) if char.isalpha() and char.islower()}
+
+expected = {'w': 1, 'o': 2, 'e': 3, 'b': 1, 'g': 1, 'n': 1}
+print(count_letters('woebegone') == expected)
+
+expected = {'l': 1, 'o': 1, 'w': 1, 'e': 4, 'r': 2,
+            'c': 2, 'a': 2, 's': 2, 'u': 1, 'p': 2}
+print(count_letters('lowercase/uppercase') == expected)
+
+expected = {'u': 1, 'o': 1, 'i': 1, 's': 1}
+print(count_letters('W. E. B. Du Bois') == expected)
+
+print(count_letters('x') == {'x': 1})
+print(count_letters('') == {})
+print(count_letters('!!!') == {})
+
+## with traditional loop, faster method O(n) -> loop over string only once
+# previous version with .count() loops over list multiple times
+
+def count_letters(s):
+    counts = {}
+    for ch in s:
+        if ch.isalpha() and ch.islower():
+            counts[ch] = counts.get(ch, 0) + 1
+    return counts
+
+### Problem 7 - time 17min
+# Create a function that takes a list of integers as an argument and returns the number of identical pairs of integers in that list. For instance, the number of identical pairs in [1, 2, 3, 2, 1] is 2: occurrences each of both 2 and 1.
+
+# If the list is empty or contains exactly one value, return 0.
+
+# If a certain number occurs more than twice, count each complete pair once. For instance, for [1, 1, 1, 1] and [2, 2, 2, 2, 2], the function should return 2. The first list contains two complete pairs while the second has an extra 2 that isn't part of the other two pairs.
+
+'''
+P
+give a list of integers return count of pairs (unique and not unique)
+I = list of integers
+O = integer (number of pairs in the list)
+E
+-if empty list or not pairs return 0
+-if num occur more than twice -> count complete pairs
+D
+list and sets
+A
+m.i. iterate through the set version of the list and add in a new list the count value of the integer in the list // 2 -> return sum of value
+
+main
+- first list comprehension we iterate through set of the list to create a new list with the integers that appear more than once
+- second comprehension iterate through repeated numbers
+    if count of num is > 2 -> repeated_numbers.count(num) // 2
+    else -> 1
+- return sum of this second list
+C
+'''
+
+def pairs(my_list):
+    if my_list == []:
+        return 0
+
+    new_list = [num for num in set(my_list) if my_list.count(num) > 1]
+
+    return sum([my_list.count(num) // 2 if my_list.count(num) > 2 else 1 for num in new_list])
+
+## simplified version:
+
+def pairs(my_list):
+    return sum(my_list.count(num) // 2 for num in set(my_list))
+
+print(pairs([3, 1, 4, 5, 9, 2, 6, 5, 3, 5, 8, 9, 7]) == 3)
+print(pairs([2, 7, 1, 8, 2, 8, 1, 8, 2, 8, 4]) == 4)
+print(pairs([]) == 0)
+print(pairs([23]) == 0)
+print(pairs([997, 997]) == 1)
+print(pairs([32, 32, 32]) == 1)
+print(pairs([7, 7, 7, 7, 7, 7, 7]) == 3)
+
+### Problem 8 - 14min
+# Create a function that takes a non-empty string as an argument. The string consists entirely of lowercase alphabetic characters. The function should return the length of the longest vowel substring. The vowels of interest are "a", "e", "i", "o", and "u".
+
+'''
+P
+E
+I = a non empty string of lowercase
+O = integer that represents the longest contiguous substring of vowels
+D
+strings
+A
+idea - iterate string
+for char -> if char is a vowel -> count + 1
+    -> max count also replace
+
+main
+-init count and max_count = 0
+-VOWEL = 'aeiou'
+-loop through string:
+-for each char:
+    if char in VOWEL:
+        increment count +1
+        if count > max_count:
+            update max_count
+    else:
+        reset count to 0
+- return max_count
+
+C
+'''
+
+def longest_vowel_substring(my_str):
+    VOWELS = 'aeiou'
+    count = 0
+    max_count = 0
+
+    for char in my_str:
+        if char in VOWELS:
+            count += 1
+            if count > max_count:
+                max_count = count
+        else:
+            count = 0
+
+    return max_count
+
+print(longest_vowel_substring('cwm') == 0)
+print(longest_vowel_substring('many') == 1)
+print(longest_vowel_substring('launchschoolstudents') == 2)
+print(longest_vowel_substring('eau') == 3)
+print(longest_vowel_substring('beauteous') == 3)
+print(longest_vowel_substring('sequoia') == 4)
+print(longest_vowel_substring('miaoued') == 5)
+
+### Problem 9 - 6min - opt 2 10min
+# Create a function that takes two string arguments and returns the number of times that the second string occurs in the first string. Note that overlapping strings don't count: 'babab' contains 1 instance of 'bab', not 2.
+
+# You may assume that the second argument is never an empty string.
+
+'''
+P
+E
+-overlapping strings do not count
+-2nd string never empty
+-empty 1st string -> return 0
+I = 2 strings
+O = integer (times 2nd string occurs in 1st)
+D
+string
+A
+use method count (avoids overlapping matches)
+    -> count how many times str2(subs) appears in str1 -> return count
+C
+'''
+
+def count_substrings(str1, substr):
+    return str1.count(substr)
+
+print(count_substrings('babab', 'bab') == 1)
+print(count_substrings('babab', 'ba') == 2)
+print(count_substrings('babab', 'b') == 3)
+print(count_substrings('babab', 'x') == 0)
+print(count_substrings('babab', 'x') == 0)
+print(count_substrings('', 'x') == 0)
+print(count_substrings('bbbaabbbbaab', 'baab') == 2)
+print(count_substrings('bbbaabbbbaab', 'bbaab') == 2)
+print(count_substrings('bbbaabbbbaabb', 'bbbaabb') == 1)
+
+'''
+Alg opt 2 without using method count:
+-init i = 0 and count = 0
+
+while i is within boundaries of string -> i <= len(str1) - len(str2)
+    if str1[i:i + len(str2)] == str 2
+        increment count
+        i += len(str2) to avoid overlaps
+    else:
+        i += 1
+
+return count
+C
+'''
+
+def count_substrings(str1, str2):
+    count = 0
+    i = 0
+
+    while i <= len(str1) - len(str2):
+        if str1[i : i + len(str2)] == str2:
+            count += 1
+            i += len(str2) # avoid overlaps
+        else:
+            i += 1
+
+    return count
+
+### Problem 10 - 10min
+# Create a function that takes a string of digits as an argument and returns the number of even-numbered substrings that can be formed. For example, in the case of '1432', the even-numbered substrings are '14', '1432', '4', '432', '32', and '2', for a total of 6 substrings.
+
+# If a substring occurs more than once, you should count each occurrence as a separate substring.
+
+'''
+P
+E
+-if all num are odd -> no even substr -> 0
+I = string of digits
+O = integer (num of even-numbered substrings)
+D
+strings, integers, and list
+A
+idea -> create all substrings with brute force, transform them to integers and add the even ones to a list. Return len of list
+
+list comprehension
+    outer loop -> start -> for i in range(len(my_str))
+        inner loop -> end -> for j in range(i +1, len(my_str) + 1)
+
+    cond -> if int(my_str[i:j]) is even
+
+    outer expression 1
+
+    return len of new string
+C
+'''
+
+def even_substrings(my_str):
+    return len([1 for i in range(len(my_str))
+                    for j in range(i + 1, len(my_str) + 1)
+                        if int(my_str[i:j]) % 2 == 0])
+
+
+print(even_substrings('1432') == 6)
+print(even_substrings('3145926') == 16)
+print(even_substrings('2718281') == 16)
+print(even_substrings('13579') == 0)
+print(even_substrings('143232') == 12)
+
+## simpler version without using integers or list comprehensions
+# this solution is a clever taking into consideration that if the last digit is even the whole number will be even
+
+def even_substrings(s):
+    count = 0
+    for i in range(len(s)):
+        for j in range(i, len(s)):
+            if s[j] in '02468':
+                count += 1
+    return count
+
+## even simpler option (if last digit is even all substrings formed with it are too)
+
+def even_substrings(s):
+    return sum(i + 1 for i, ch in enumerate(s) if ch in '02468')
